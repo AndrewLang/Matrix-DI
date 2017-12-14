@@ -1,0 +1,33 @@
+{
+  "name": "matrix-di",
+  "version": "1.0.0",
+  "description": "TypeScript Dependency Injection framework",
+  "main": "index.js",
+  "scripts": {
+    "start": "gulp build && nodemon ./dist/bootstrap.js",
+    "build": "gulp build",
+    "serve": "node dist/bootstrap.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "TypeScript",
+    "IoC",
+    "DI",
+    "Dependency",
+    "Injection"
+  ],
+  "dependencies": {
+    "reflect-metadata": "^0.1.10"
+  },
+  "devDependencies": {
+    "@types/node": "8.5.1",
+    "@types/reflect-metadata": "^0.0.5",
+    "nodemon": "1.12.7",
+    "gulp": "3.9.1",
+    "gulp-typescript": "^3.2.3",
+    "ts-node": "4.0.1",
+    "typescript": "2.6.2"
+  },
+  "author": "Andy Lang",
+  "license": "ISC"
+}
