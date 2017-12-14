@@ -110,7 +110,7 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
 
         return descriptor ? this.ResolveInstanceByDescriptor(descriptor) : null;
     }
-    private ResolveInstanceByCreator(creator: Models.Type<any>, token: Models.IServiceToken): any {
+    private ResolveInstanceByCreator(creator: Models.IType<any>, token: Models.IServiceToken): any {
         let descriptor = new ServiceDescriptor();
         descriptor.Token = token;
         descriptor.ImplementationType = creator;

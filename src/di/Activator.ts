@@ -13,7 +13,7 @@ export class Activator {
      * @param type typeof object
      * @param args arguments
      */
-    static Createinstance<T>(type: Models.Type<T>, ...args: any[]): T {
+    static Createinstance<T>(type: Models.IType<T>, ...args: any[]): T {
         let factory = Activator.Factory(type);
 
         return factory(...args);
@@ -23,7 +23,7 @@ export class Activator {
      * Factory of creating object instance with arguments
      * @param ctor type of given object 
      */
-    public static Factory<T>(ctor: Models.Type<T>): (...args: any[]) => T {
+    public static Factory<T>(ctor: Models.IType<T>): (...args: any[]) => T {
         return (...args: any[]) => new ctor(...args);
     }
     

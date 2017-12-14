@@ -7,7 +7,7 @@ export interface IMetadata {
 export interface IMethodDescriptor {
     Name: string;
     Token?: any;
-    Creator?: Type<any>;
+    Creator?: IType<any>;
 }
 export interface IParameterDescriptor {
     Index: number;
@@ -20,6 +20,6 @@ export interface IServiceToken {
     Token: string | symbol;
 }
 
-export interface Type<T> extends Function {
+export interface IType<T> extends Function {
     new(...args: any[]): T;
 }

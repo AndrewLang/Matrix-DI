@@ -5,14 +5,19 @@ import { KnownKeys } from './KnownKeys';
 import 'reflect-metadata';
 
 
-
+/**
+ * 
+ * @param target 
+ * @param property 
+ * @param index 
+ * @param metadata 
+ */
 export const DecorateParameter = (target: any, property: string, index: number, metadata: Models.IMetadata) => {
-    const metadataKey = KnownKeys.TaggedTypes;
-
+    let metadataKey = KnownKeys.TaggedTypes;
 
     let paramsMetadata = {};
-    const isParameterDecorator = (typeof index === "number");
-    const key: string = (index !== undefined && isParameterDecorator) ? index.toString() : property;
+    let isParameterDecorator = (typeof index === "number");
+    let key: string = (index !== undefined && isParameterDecorator) ? index.toString() : property;
 
     // if the decorator is used as a parameter decorator, the property name must be provided
     if (isParameterDecorator && property !== undefined) {
@@ -43,6 +48,10 @@ export const DecorateParameter = (target: any, property: string, index: number, 
     Reflector.DefineMetadata(metadataKey, paramsMetadata, target);
 }
 
+/**
+ * 
+ * @param target 
+ */
 const InjectableBody = (target: any) => {
     if (Reflector.HasOwnMetadata(KnownKeys.ParamTypes, target)) {
         throw new Error('Cannot apply @Injectable decorator multiple times.');
@@ -61,7 +70,10 @@ export const Injectable = () => {
     return InjectableBody;
 }
 
-
+/**
+ * 
+ * @param token 
+ */
 export const Inject = (token: Models.IServiceToken) => {
     return (target: any, targetKey: string, index?: number) => {
 
