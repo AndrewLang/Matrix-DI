@@ -21,6 +21,13 @@ describe('ServiceDescriptor', () => {
         expect(descriptor.Name).be.equals('Great');
 
     });
+    it('Should has scope', () => {
+        let descriptor = Common.ServiceDescriptor.Singleton({ Token: 'test' })
+            .WithScope('Singleton');
+        expect(descriptor).to.not.be.equals(null);
+        expect(descriptor.Scope).be.equals('Singleton');
+
+    });
     it('Should has instance', () => {
         let descriptor = Common.ServiceDescriptor.Singleton({ Token: 'test' })
             .UseInstance({ Name: 'Great' });

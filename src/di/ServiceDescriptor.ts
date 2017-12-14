@@ -1,6 +1,8 @@
 import * as Models from './Models';
 import { IServiceProvider } from './IServiceProvider';
-import { ServiceScope } from './ServiceScope';
+
+
+export type ServiceScope = 'Singleton' | 'Transient' | 'Scoped';
 
 export class ServiceDescriptor {
     Name: string;
@@ -18,6 +20,7 @@ export class ServiceDescriptor {
         this.Scope = scope;
         return this;
     }
+
     UseInstance(instance: any): ServiceDescriptor {
         this.ImplementationInstance = instance;
         return this;
@@ -31,12 +34,43 @@ export class ServiceDescriptor {
         return this;
     }
 
-
-    static Singleton(token: Models.IServiceToken): ServiceDescriptor {
+    /**
+     * Create a service descriptor
+     * @param token 
+     */
+    static Create(token: Models.IServiceToken): ServiceDescriptor {
         let descriptor = new ServiceDescriptor();
         descriptor.Token = token;
         return descriptor;
     }
-
-
+    /**
+     * Create a singleton service descriptor
+     * @param token 
+     */
+    static Singleton(token: Models.IServiceToken): ServiceDescriptor {
+        let descriptor = new ServiceDescriptor();
+        descriptor.Token = token;
+        descriptor.Scope = 'Singleton';
+        return descriptor;
+    }
+    /**
+         * Create a singleton service descriptor
+         * @param token 
+         */
+    static Scoped(token: Models.IServiceToken): ServiceDescriptor {
+        let descriptor = new ServiceDescriptor();
+        descriptor.Token = token;
+        descriptor.Scope = 'Scoped';
+        return descriptor;
+    }
+    /**
+         * Create a singleton service descriptor
+         * @param token 
+         */
+    static Transient(token: Models.IServiceToken): ServiceDescriptor {
+        let descriptor = new ServiceDescriptor();
+        descriptor.Token = token;
+        descriptor.Scope = 'Transient';
+        return descriptor;
+    }
 }
