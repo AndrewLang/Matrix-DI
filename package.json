@@ -9,6 +9,10 @@
     "serve": "node dist/bootstrap.js",
     "test": "mocha -r ts-node/register test/**/*.spec.ts"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AndrewLang/Matrix-DI.git"
+  },
   "keywords": [
     "TypeScript",
     "IoC",
