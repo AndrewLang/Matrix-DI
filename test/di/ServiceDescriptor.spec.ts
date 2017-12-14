@@ -1,6 +1,6 @@
 import * as Common from './imports';
 import 'mocha';
-import { expect, should } from 'chai';
+import { expect } from 'chai';
 
 
 describe('ServiceDescriptor', () => {

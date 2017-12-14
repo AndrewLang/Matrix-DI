@@ -34,15 +34,7 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
         if (!serviceToken) {
             return null;
         }
-        console.log('====================================================');
-        console.log('Start resolve service by')
-        console.log(serviceToken);
-        console.log();
-
         let instance = this.ResolveInstanceByToken(serviceToken);
-
-
-        console.log('====================================================');
         return instance;
     }
 

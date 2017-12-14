@@ -2,6 +2,9 @@ import 'reflect-metadata';
 import { KnownKeys } from './KnownKeys';
 import * as Models from './Models';
 
+/**
+ * A wrapper of 'reflect-metadata'
+ */
 export class Reflector {
 
     /**

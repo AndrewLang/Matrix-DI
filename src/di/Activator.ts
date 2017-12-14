@@ -3,35 +3,30 @@ import { Reflector } from './Reflector';
 import * as Models from './Models';
 import { KnownKeys } from './KnownKeys';
 
+/**
+ * Used to create instance, get object metadata etc.
+ */
 export class Activator {
 
     /**
-     * 
-     * @param type 
-     * @param args 
+     * Create instance
+     * @param type typeof object
+     * @param args arguments
      */
     static Createinstance<T>(type: Models.Type<T>, ...args: any[]): T {
         let factory = Activator.Factory(type);
 
         return factory(...args);
     }
-    /** Factory of creating object instance with arguments */
-    public static Factory<T>(t: Models.Type<T>): (...args: any[]) => T {
-        return (...args: any[]) => new t(...args);
-    }
+    
     /**
-     * Get parameters
-     * @param type 
+     * Factory of creating object instance with arguments
+     * @param ctor type of given object 
      */
-    public static GetParameters(type: Models.Type<any>): any[][] {
-        // Note: only report metadata if we have at least one class decorator
-        // to stay in sync with the static reflector.
-        if (!Models.IsType(type)) {
-            return [];
-        }
-
-        return [];
+    public static Factory<T>(ctor: Models.Type<T>): (...args: any[]) => T {
+        return (...args: any[]) => new ctor(...args);
     }
+    
     /**
      * Get constructor or function name
      * @param func 
@@ -84,14 +79,5 @@ export class Activator {
 
         return descriptors;
     }
-    /**
-     * 
-     * @param constructor 
-     */
-    public static GetConstructorMetadata(constructor: Function): Models.ConstructorMetadata {
-        return {
-            CompilerData: Reflector.GetFunctionMetadata(constructor),
-            UserData: Reflector.GetFunctionTaggedMetadata(constructor) || {}
-        };
-    }
+   
 }
