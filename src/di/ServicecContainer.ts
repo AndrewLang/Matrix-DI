@@ -12,8 +12,7 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
     private instanceTable = new Dictionary<Models.IServiceToken, any>();
 
     constructor() {
-        this.Register(ServiceDescriptor.Singleton({ Token: 'IServiceContainer' }).UseInstance(this))
-            .Register(ServiceDescriptor.Singleton({ Token: 'IServiceProvider' }).UseInstance(this));
+        this.Initialize();
     }
 
     Register(descriptor: ServiceDescriptor): IServiceContainer {
@@ -34,6 +33,7 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
         if (!serviceToken) {
             return null;
         }
+
         let instance = this.ResolveInstanceByToken(serviceToken);
         return instance;
     }
@@ -45,15 +45,17 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
         return this.TryResolve(serviceToken);
     }
 
+    private Initialize(): void {
+        this.Register(ServiceDescriptor.Singleton({ Token: 'IServiceContainer' }).UseInstance(this))
+            .Register(ServiceDescriptor.Singleton({ Token: 'IServiceProvider' }).UseInstance(this));
+    }
+
     private GetDictionaryValue(dictionary: IDictionary<Models.IServiceToken, any>, token: Models.IServiceToken): any {
         if (dictionary.ContainsKey(token)) {
             return dictionary.Item(token);
         } else {
-            console.log('Get service descriptor with');
-            console.log(token);
             let data = dictionary.FirstOrDefault(x => x.Key.Token === token.Token);
 
-            console.log(data);
             return data ? data.Value : null;
         }
     }
@@ -61,16 +63,10 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
         let dependencies = [];
 
         let descriptors = Activator.GetConstructorDescriptors(descriptor.ImplementationType);
-        console.log('Method descriptors');
-        console.log(descriptors);
-        console.log();
 
         for (let item of descriptors) {
-            console.log("Resolve dependency ")
-            console.log(item)
             let dependency = this.ResolveInstanceByMethodDescriptor(item);
-           
-            console.log(dependency)
+
             dependencies.push(dependency);
         }
 
@@ -81,32 +77,38 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
             return this.ResolveInstanceByCreator(methodDescriptor.Creator, methodDescriptor.Token);
         } else if (methodDescriptor.Token) {
             return this.ResolveInstanceByToken(methodDescriptor.Token);
-        }  
+        }
         return null;
     }
     private ResolveInstanceByToken(token: Models.IServiceToken): any {
+        let descriptor: ServiceDescriptor = this.GetDictionaryValue(this.tokenTable, token);
+
+        if (descriptor.Scope == 'Transient') {
+            return this.ResolveTransient(descriptor, token);
+        } else if (descriptor.Scope == 'Singleton') {
+            return this.ResolveSingleton(descriptor, token);
+        }
+
+        throw new Error('Unsupported scope ');
+    }
+    private ResolveTransient(descriptor: ServiceDescriptor, token: Models.IServiceToken): any {
+        let dependencies = this.ResolveDependencies(descriptor);
+
+        return Activator.Createinstance<any>(descriptor.ImplementationType, ...dependencies);
+
+    }
+    private ResolveSingleton(descriptor: ServiceDescriptor, token: Models.IServiceToken): any {
         let instance = this.GetDictionaryValue(this.instanceTable, token);
 
         if (instance) {
             return instance;
         }
 
-        console.log('No instance found.');
-        console.log();
-
-        let descriptor: ServiceDescriptor = this.GetDictionaryValue(this.tokenTable, token);
-
-        console.log("Service descriptor ")
-        console.log();
-        console.log(descriptor);
-        // console.log(token);
-        console.log();
         if (!descriptor) {
             descriptor = new ServiceDescriptor();
             descriptor.Token = token;
             this.tokenTable.Add(token, descriptor);
         }
-
 
         return descriptor ? this.ResolveInstanceByDescriptor(descriptor) : null;
     }
@@ -120,21 +122,13 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
         let instance: any;
 
         if (descriptor.ImplementationInstance) {
-            //  resolve instance directly
             instance = descriptor.ImplementationInstance;
             this.instanceTable.Add(descriptor.Token, instance);
         } else if (descriptor.ImplementationFactory) {
-            // resolve instance by registered factory
             instance = descriptor.ImplementationFactory(this);
             this.instanceTable.Add(descriptor.Token, instance);
         } else if (descriptor.ImplementationType) {
-            // resolve instance by implementation type
-
             let dependencies = this.ResolveDependencies(descriptor);
-
-            console.log();
-            console.log('Dependencies ');
-            console.log(dependencies);
 
             instance = Activator.Createinstance<any>(descriptor.ImplementationType, ...dependencies);
 
