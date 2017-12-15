@@ -20,9 +20,5 @@ export interface IServiceContainer {
     /**
      * Resolve instance
      */
-    Resolve<T>(token: Models.IServiceToken): T;
-    /**
-     * Resolve instance by nam e
-     */
-    ResolveByName<T>(name: string): T;
+    Resolve<T>(token: Models.IServiceToken | string): T;
 }

@@ -18,8 +18,12 @@ describe('ServiceContainer', () => {
     beforeEach(() => {
         container = new Common.ServicecContainer();
 
+        /**
+         * Register services with different pattern
+         */
         container.Register( Common.ServiceDescriptor.Singleton(loggingToken).UseType(Common.LoggingService).WithName(loggingName));
         container.Register( Common.ServiceDescriptor.Singleton(errortoken).UseType(Common.ExceptionLoggingService).WithName(errorName));
+
         //container.Singleton(loggingToken).UseType(Common.LoggingService).WithName(loggingName);
         // container.Singleton(errortoken).UseType(Common.ExceptionLoggingService).WithName(errorName);
         container.Singleton(talkToken).UseType(Common.TalkService);        
@@ -36,7 +40,7 @@ describe('ServiceContainer', () => {
     it('Resolve service without dependency', () => {
         let service = container.GetService<Common.ILoggingService>(loggingToken);
         expect(service).to.not.be.equals(null);
-        service.Debug('Debug message from test environment');
+        // service.Debug('Debug message from test environment');
     });
     it('Resolve service with dependency', () => {
         let service = container.GetService<Common.IExceptionHandlingService>(errortoken);
@@ -51,7 +55,7 @@ describe('ServiceContainer', () => {
         client = container.GetService<Common.ITransient>(transientToken);
         let date2 = client.GetId();
 
-        console.log(`${date1}  ${date2}`);
+        // console.log(`${date1}  ${date2}`);
         expect(date1).to.not.be.equals(date2, `${date1} == ${date2}`);
     });
 
@@ -59,10 +63,10 @@ describe('ServiceContainer', () => {
 
         // console.log( container);
 
-        let loggingSvc = container.ResolveByName<Common.ILoggingService>(loggingName);
+        let loggingSvc = container.Resolve<Common.ILoggingService>(loggingName);
         expect(loggingSvc).to.not.be.equals(null);
 
-        let errprSvc = container.ResolveByName<Common.IExceptionHandlingService>(errorName);
+        let errprSvc = container.Resolve<Common.IExceptionHandlingService>(errorName);
         expect(errprSvc).to.not.be.equals(null);
     });
 

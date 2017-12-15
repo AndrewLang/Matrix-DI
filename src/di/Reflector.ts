@@ -96,3 +96,7 @@ export class Reflector {
         return target;
     };
 }
+
+export const IsString = (obj: any) => boolean => {
+    return typeof obj === 'string';
+};

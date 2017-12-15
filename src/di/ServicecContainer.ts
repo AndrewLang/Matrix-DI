@@ -2,7 +2,7 @@ import { IServiceContainer } from './IServiceContainer';
 import { ServiceDescriptor } from './ServiceDescriptor';
 import * as Models from './Models';
 import { Activator } from './Activator';
-import { Reflector } from './Reflector';
+import { Reflector, IsString } from './Reflector';
 import { IServiceProvider } from './IServiceProvider';
 import { IDictionary, Dictionary } from './Dictionary';
 
@@ -45,8 +45,12 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
     /**
      * Resolve instance
      */
-    Resolve<T>(token: Models.IServiceToken): T {
-        return this.TryResolve(token);
+    Resolve<T>(token: Models.IServiceToken | string): T {
+        if (typeof token === 'string') {
+            return this.ResolveByName(token);
+        } else {
+            return this.TryResolve(token);
+        }
     }
     /**
      * Resolve instance by name
