@@ -56,7 +56,6 @@ describe('ServiceContainer', () => {
         client = container.GetService<Common.ITransient>(transientToken);
         let date2 = client.GetId();
 
-        // console.log(`${date1}  ${date2}`);
         expect(date1).to.not.be.equals(date2, `${date1} == ${date2}`);
     });
 

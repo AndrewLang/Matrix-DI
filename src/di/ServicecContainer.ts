@@ -4,7 +4,7 @@ import * as Models from './Models';
 import { Activator } from './Activator';
 import { Reflector, IsString } from './Reflector';
 import { IServiceProvider } from './IServiceProvider';
-import { IDictionary, Dictionary } from './Dictionary';
+import { IDictionary, Dictionary } from './imports';
 
 export class ServicecContainer implements IServiceContainer, IServiceProvider {
 
