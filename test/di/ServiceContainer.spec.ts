@@ -18,20 +18,21 @@ describe('ServiceContainer', () => {
     beforeEach(() => {
         container = new Common.ServicecContainer();
 
-        container.Register(Common.ServiceDescriptor.Singleton(loggingToken).UseType(Common.LoggingService).WithName(loggingName));
-        container.Register(Common.ServiceDescriptor.Singleton(errortoken).UseType(Common.ExceptionLoggingService).WithName(errorName));
-        container.Register(Common.ServiceDescriptor.Singleton(talkToken).UseType(Common.TalkService));
-        //container.Register(Common.ServiceDescriptor.Singleton(transientClientToken).UseType(Common.TransientClient));
+        container.Register( Common.ServiceDescriptor.Singleton(loggingToken).UseType(Common.LoggingService).WithName(loggingName));
+        container.Register( Common.ServiceDescriptor.Singleton(errortoken).UseType(Common.ExceptionLoggingService).WithName(errorName));
+        //container.Singleton(loggingToken).UseType(Common.LoggingService).WithName(loggingName);
+        // container.Singleton(errortoken).UseType(Common.ExceptionLoggingService).WithName(errorName);
+        container.Singleton(talkToken).UseType(Common.TalkService);        
+        //container.Singleton(transientClientToken).UseType(Common.TransientClient);
+        container.Register( Common.ServiceDescriptor.Singleton(transientClientToken).UseType(Common.TransientClient));
 
-        container.Singleton(transientClientToken).UseType(Common.TransientClient);
-
-        //container.Register(Common.ServiceDescriptor.Transient(transientToken).UseType(Common.Transient));
         container.Transient(transientToken).UseType(Common.Transient);
     });
 
     it('', () => {
 
     });
+
     it('Resolve service without dependency', () => {
         let service = container.GetService<Common.ILoggingService>(loggingToken);
         expect(service).to.not.be.equals(null);
@@ -56,6 +57,8 @@ describe('ServiceContainer', () => {
 
     it('Resolve service by name', () => {
 
+        // console.log( container);
+
         let loggingSvc = container.ResolveByName<Common.ILoggingService>(loggingName);
         expect(loggingSvc).to.not.be.equals(null);
 
@@ -63,4 +66,10 @@ describe('ServiceContainer', () => {
         expect(errprSvc).to.not.be.equals(null);
     });
 
+    it('Resolve instance without Injectable decorator', () => {
+
+        let client = container.Resolve<Common.TransientClient>(transientClientToken);
+
+        expect(client).to.not.be.equals(null);
+    });
 })

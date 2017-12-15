@@ -48,26 +48,26 @@ export const DecorateParameter = (target: any, property: string, index: number, 
     Reflector.DefineMetadata(metadataKey, paramsMetadata, target);
 }
 
-/**
- * 
- * @param target 
- */
-const InjectableBody = (target: any) => {
-    if (Reflector.HasOwnMetadata(KnownKeys.ParamTypes, target)) {
-        throw new Error('Cannot apply @Injectable decorator multiple times.');
-    }
+// /**
+//  * 
+//  * @param target 
+//  */
+// export const InjectableBody = (target: any) => {
+//     if (Reflector.HasOwnMetadata(KnownKeys.ParamTypes, target)) {
+//         throw new Error('Cannot apply @Injectable decorator multiple times.');        
+//     }
 
-    let types = Reflector.GetMetadata(KnownKeys.ReflectParamTypes, target) || [];
+//     let types = Reflector.GetMetadata(KnownKeys.ReflectParamTypes, target) || [];
 
-    Reflector.DefineMetadata(KnownKeys.ParamTypes, types, target);
+//     Reflector.DefineMetadata(KnownKeys.ParamTypes, types, target);
 
-    return target;
-};
+//     return target;
+// };
 /**
  * Injectable decorator used to mark a class as injectable
  */
 export const Injectable = () => {
-    return InjectableBody;
+    return Reflector.RelfectMetadata;
 }
 
 /**

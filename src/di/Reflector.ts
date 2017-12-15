@@ -79,4 +79,20 @@ export class Reflector {
         }
         return descriptors;
     }
+
+    /**
+     * 
+     * @param target 
+     */
+    static RelfectMetadata = (target: any) => {
+        if (Reflector.HasOwnMetadata(KnownKeys.ParamTypes, target)) {
+            return target;
+        }
+
+        let types = Reflector.GetMetadata(KnownKeys.ReflectParamTypes, target) || [];
+
+        Reflector.DefineMetadata(KnownKeys.ParamTypes, types, target);
+
+        return target;
+    };
 }

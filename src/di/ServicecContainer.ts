@@ -2,6 +2,7 @@ import { IServiceContainer } from './IServiceContainer';
 import { ServiceDescriptor } from './ServiceDescriptor';
 import * as Models from './Models';
 import { Activator } from './Activator';
+import { Reflector } from './Reflector';
 import { IServiceProvider } from './IServiceProvider';
 import { IDictionary, Dictionary } from './Dictionary';
 
@@ -20,6 +21,8 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
             throw new Error(`Null parameter of 'descriptor'`);
         }
 
+        this.EnsureInjectable(descriptor);
+        /** should check Injectable attribute */
         if (descriptor.Name && descriptor.Token) {
             this.nameTokenMapping.Add(descriptor.Name, descriptor.Token);
         }
@@ -76,6 +79,7 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
     GetService(serviceToken: any) {
         return this.TryResolve(serviceToken);
     }
+
 
     private Initialize(): void {
         this.Register(ServiceDescriptor.Singleton({ Token: 'IServiceContainer' }).UseInstance(this))
@@ -167,5 +171,12 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
         }
 
         return instance;
+    }
+    private EnsureInjectable(descriptor: ServiceDescriptor): void {
+        if (!descriptor.ImplementationType) {
+            return;
+        }
+
+        Reflector.RelfectMetadata(descriptor.ImplementationType);
     }
 }

@@ -28,7 +28,7 @@ export class Transient implements ITransient {
     }
 }
 
-@Common.Injectable()
+// @Common.Injectable()
 export class TransientClient {
 
     constructor( @Common.Inject({ Token: 'ITransient' }) private transient: ITransient, ) {
