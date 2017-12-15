@@ -11,11 +11,15 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
     private nameTokenMapping = new Dictionary<string, Models.IServiceToken>();
     private tokenTable = new Dictionary<Models.IServiceToken, ServiceDescriptor>();
     private instanceTable = new Dictionary<Models.IServiceToken, any>();
+    private descriptorPreBuffer = [];
 
     constructor() {
         this.Initialize();
     }
 
+    /**
+     * Register a service descriptor
+     */
     Register(descriptor: ServiceDescriptor): IServiceContainer {
         if (!descriptor) {
             throw new Error(`Null parameter of 'descriptor'`);
@@ -31,14 +35,24 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
 
         return this;
     }
+    /**
+     * 
+     * @param token 
+     */
     Singleton(token: Models.IServiceToken): ServiceDescriptor {
         let descriptor = ServiceDescriptor.Singleton(token);
-        this.Register(descriptor);
+        descriptor.Scope = 'Singleton';
+        this.descriptorPreBuffer.push(descriptor);
         return descriptor;
     }
+    /**
+     * 
+     * @param token 
+     */
     Transient(token: Models.IServiceToken): ServiceDescriptor {
         let descriptor = ServiceDescriptor.Transient(token);
-        this.Register(descriptor);
+        descriptor.Scope = 'Transient';
+        this.descriptorPreBuffer.push(descriptor);
         return descriptor;
     }
 
@@ -46,16 +60,35 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
      * Resolve instance
      */
     Resolve<T>(token: Models.IServiceToken | string): T {
+        return this.ResolveInternal<T>(token);
+    }
+
+
+
+    GetService(serviceToken: Models.IServiceToken);
+    GetService<T>(serviceToken: Models.IServiceToken): T;
+    GetService(serviceToken: any) {
+        return this.Resolve(serviceToken);
+    }
+
+
+    private Initialize(): void {
+        this.Register(ServiceDescriptor.Singleton({ Token: 'IServiceContainer' }).UseInstance(this))
+            .Register(ServiceDescriptor.Singleton({ Token: 'IServiceProvider' }).UseInstance(this));
+    }
+    private ResolveInternal<T>(token: Models.IServiceToken | string): T {
+        this.RegisterDescriptors();
+
         if (typeof token === 'string') {
-            return this.ResolveByName(token);
+            return this.TryResolveByName(token);
         } else {
             return this.TryResolve(token);
         }
     }
     /**
-     * Resolve instance by name
-     */
-    ResolveByName<T>(name: string): T {
+    * Resolve instance by name
+    */
+    private TryResolveByName<T>(name: string): T {
         if (!name) {
             throw new Error(`Null parameter of 'name'`);
         }
@@ -68,7 +101,7 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
 
         return null;
     }
-    TryResolve<TService>(serviceToken: Models.IServiceToken): TService {
+    private TryResolve<TService>(serviceToken: Models.IServiceToken): TService {
         if (!serviceToken) {
             return null;
         }
@@ -76,18 +109,14 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
         let instance = this.ResolveInstanceByToken(serviceToken);
         return instance;
     }
+    private RegisterDescriptors(): void {        
+        if (this.descriptorPreBuffer && this.descriptorPreBuffer.length > 0) {
+            for (let item of this.descriptorPreBuffer) {
+                this.Register(item);
+            }
 
-
-    GetService(serviceToken: Models.IServiceToken);
-    GetService<T>(serviceToken: Models.IServiceToken): T;
-    GetService(serviceToken: any) {
-        return this.TryResolve(serviceToken);
-    }
-
-
-    private Initialize(): void {
-        this.Register(ServiceDescriptor.Singleton({ Token: 'IServiceContainer' }).UseInstance(this))
-            .Register(ServiceDescriptor.Singleton({ Token: 'IServiceProvider' }).UseInstance(this));
+            this.descriptorPreBuffer = [];
+        }
     }
     private GetDictionaryValue(dictionary: IDictionary<Models.IServiceToken, any>, token: Models.IServiceToken): any {
         if (dictionary.ContainsKey(token)) {

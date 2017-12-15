@@ -21,14 +21,14 @@ describe('ServiceContainer', () => {
         /**
          * Register services with different pattern
          */
-        container.Register( Common.ServiceDescriptor.Singleton(loggingToken).UseType(Common.LoggingService).WithName(loggingName));
-        container.Register( Common.ServiceDescriptor.Singleton(errortoken).UseType(Common.ExceptionLoggingService).WithName(errorName));
+        //container.Register( Common.ServiceDescriptor.Singleton(loggingToken).UseType(Common.LoggingService).WithName(loggingName));
+        //container.Register( Common.ServiceDescriptor.Singleton(errortoken).UseType(Common.ExceptionLoggingService).WithName(errorName));
+        //container.Register( Common.ServiceDescriptor.Singleton(transientClientToken).UseType(Common.TransientClient));
 
-        //container.Singleton(loggingToken).UseType(Common.LoggingService).WithName(loggingName);
-        // container.Singleton(errortoken).UseType(Common.ExceptionLoggingService).WithName(errorName);
-        container.Singleton(talkToken).UseType(Common.TalkService);        
-        //container.Singleton(transientClientToken).UseType(Common.TransientClient);
-        container.Register( Common.ServiceDescriptor.Singleton(transientClientToken).UseType(Common.TransientClient));
+        container.Singleton(loggingToken).UseType(Common.LoggingService).WithName(loggingName);
+        container.Singleton(errortoken).UseType(Common.ExceptionLoggingService).WithName(errorName);
+        container.Singleton(talkToken).UseType(Common.TalkService);
+        container.Singleton(transientClientToken).UseType(Common.TransientClient);
 
         container.Transient(transientToken).UseType(Common.Transient);
     });
@@ -43,6 +43,7 @@ describe('ServiceContainer', () => {
         // service.Debug('Debug message from test environment');
     });
     it('Resolve service with dependency', () => {
+
         let service = container.GetService<Common.IExceptionHandlingService>(errortoken);
         expect(service).to.not.be.equals(null);
         service.Handle('Exception handler');
@@ -60,8 +61,6 @@ describe('ServiceContainer', () => {
     });
 
     it('Resolve service by name', () => {
-
-        // console.log( container);
 
         let loggingSvc = container.Resolve<Common.ILoggingService>(loggingName);
         expect(loggingSvc).to.not.be.equals(null);
