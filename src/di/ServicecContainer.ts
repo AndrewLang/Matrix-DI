@@ -28,7 +28,39 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
 
         return this;
     }
+    Singleton(token: Models.IServiceToken): ServiceDescriptor {
+        let descriptor = ServiceDescriptor.Singleton(token);
+        this.Register(descriptor);
+        return descriptor;
+    }
+    Transient(token: Models.IServiceToken): ServiceDescriptor {
+        let descriptor = ServiceDescriptor.Transient(token);
+        this.Register(descriptor);
+        return descriptor;
+    }
 
+    /**
+     * Resolve instance
+     */
+    Resolve<T>(token: Models.IServiceToken): T {
+        return this.TryResolve(token);
+    }
+    /**
+     * Resolve instance by name
+     */
+    ResolveByName<T>(name: string): T {
+        if (!name) {
+            throw new Error(`Null parameter of 'name'`);
+        }
+
+        if (this.nameTokenMapping.ContainsKey(name)) {
+            let token = this.nameTokenMapping.Item(name);
+
+            return this.Resolve<T>(token);
+        }
+
+        return null;
+    }
     TryResolve<TService>(serviceToken: Models.IServiceToken): TService {
         if (!serviceToken) {
             return null;
@@ -49,7 +81,6 @@ export class ServicecContainer implements IServiceContainer, IServiceProvider {
         this.Register(ServiceDescriptor.Singleton({ Token: 'IServiceContainer' }).UseInstance(this))
             .Register(ServiceDescriptor.Singleton({ Token: 'IServiceProvider' }).UseInstance(this));
     }
-
     private GetDictionaryValue(dictionary: IDictionary<Models.IServiceToken, any>, token: Models.IServiceToken): any {
         if (dictionary.ContainsKey(token)) {
             return dictionary.Item(token);
