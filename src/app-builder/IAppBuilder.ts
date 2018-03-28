@@ -48,8 +48,9 @@ export class AppBuilder implements IAppBuilder {
             item.ConfigureServices(this.serviceContainer);
         }
 
+        let serviceProvider = this.serviceContainer.Resolve<IServiceProvider>({ Token: 'IServiceProvider' });
         for (let item of this.components) {
-            item.Configure();
+            item.Configure(serviceProvider);
         }
     }
 }

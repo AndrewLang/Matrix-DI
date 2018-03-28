@@ -1,8 +1,8 @@
-import { IServiceContainer } from "../index";
+import { IServiceContainer, IServiceProvider } from "../index";
 
 export interface IComponent {
     
     ConfigureServices(services: IServiceContainer): void;
 
-    Configure(): void;
+    Configure(serviceProvider: IServiceProvider): void;
 }
