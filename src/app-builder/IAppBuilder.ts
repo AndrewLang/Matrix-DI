@@ -1,53 +1,47 @@
-import { IMiddleware, IMiddlewareContext, DelegateBlock } from './IMiddleware';
-import { IDictionary, IServiceProvider, Dictionary, Service } from './imports';
-
+import { IDictionary, IServiceProvider, Dictionary, Service, IServiceContainer } from './imports';
+import { IComponent } from './IComponent';
 
 export interface IAppBuilder {
 
-    readonly ServiceProvider: IServiceProvider;
+    readonly ServiceContainer: IServiceContainer;
 
     readonly Properties: IDictionary<any, any>;
 
-    Use(block: DelegateBlock): IAppBuilder;
+    Use(component: IComponent): void;
 
-    Build(): IMiddleware;
+    Build(): void;
 }
 
 export class AppBuilder implements IAppBuilder {
 
     private properties = new Dictionary<any, any>();
-    private middlewares = new Array<DelegateBlock>();
+    private components = new Array<IComponent>();
 
-    constructor( @Service({ Token: 'IServiceProvider' }) private serviceProvider: IServiceProvider) {
+    constructor(@Service({ Token: 'IServiceContainer' }) private serviceContainer: IServiceContainer) {
 
     }
 
-    get ServiceProvider(): IServiceProvider {
-        return this.serviceProvider;
+    get ServiceContainer(): IServiceContainer {
+        return this.serviceContainer;
     }
 
     get Properties(): IDictionary<any, any> {
         return this.properties;
     }
 
-    Use(block: DelegateBlock): IAppBuilder {
-        if (block) {
-            this.middlewares.push(block);
+    Use(component: IComponent): void {
+        if (component) {
+            this.components.push(component);
         }
-        return this;
-    }
-    Build(): IMiddleware {
-        let entry: IMiddleware = {};// this.Entry;
-
-        let current = entry;
-        for (let item of this.middlewares) {
-            current.Block = item;
-            let next: IMiddleware = {};
-            current.Next = next;
-            current = next;
-        }
-        return entry;
     }
 
-    private async Entry(context: IMiddlewareContext, next: DelegateBlock) { }
+    Build(): void {
+        for (let item of this.components) {
+            item.ConfigureServices(this.serviceContainer);
+        }
+
+        for (let item of this.components) {
+            item.Configure();
+        }
+    }
 }

@@ -40,40 +40,12 @@ describe('AppBuilder', () => {
     it('ServiceProvider is valid', () => {
         let appBuilder = container.Resolve<Common.IAppBuilder>(appBuilderToken);
         expect(appBuilder).to.not.be.equals(null);
-        expect(appBuilder.ServiceProvider).to.not.be.equals(null);
+        expect(appBuilder.ServiceContainer).to.not.be.equals(null);
     });
     it('Properties is valid', () => {
         let appBuilder = container.Resolve<Common.IAppBuilder>(appBuilderToken);
         expect(appBuilder.Properties).to.not.be.equals(null);
     });
-    it('UseBlock Build', async () => {
-        let appBuilder = container.Resolve<Common.IAppBuilder>(appBuilderToken);
-        let middleware1: Common.DelegateBlock = async (context, next) => {
-            context.Tag++; context.Properties.Add('Middleware1', true);
-            if (next) {
-                await next(context);
-            }
-        };
-        let middleware2: Common.DelegateBlock = async (context, next) => {
-            context.Tag++; context.Properties.Add('Middleware2', true);
-            if (next) {
-                await next(context);
-            }
-        };
-
-        appBuilder
-            .Use(middleware1)
-            .Use(middleware2);
-
-        let context = { Tag: 1, Properties: new Common.Dictionary<any, any>() };
-        let entry = appBuilder.Build();
-
-        await entry.Block(context);
-
-        expect(context.Tag).be.equals(3);
-        expect(context.Properties.Item('Block1')).be.equals(true);
-        expect(context.Properties.Item('Block2')).be.equals(true);
-    });
-
+    
 
 });
