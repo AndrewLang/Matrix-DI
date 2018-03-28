@@ -7,7 +7,7 @@ describe('AppBuilder', () => {
     let loggingName = 'default-logging';;
     let errorName = 'default-error-handling';
 
-    let container: Common.ServicecContainer;
+    let container: Common.ServiceContainer;
     let loggingToken = { Token: 'ILoggingService' };
     let errortoken = { Token: 'IExceptionLoggingService' };
     let talkToken = { Token: 'ITalkService' };
@@ -16,7 +16,7 @@ describe('AppBuilder', () => {
     let appBuilderToken = { Token: 'IAppBuilder' };
 
     beforeEach(() => {
-        container = new Common.ServicecContainer();
+        container = new Common.ServiceContainer();
 
         container.Singleton(loggingToken).UseType(Common.LoggingService).WithName(loggingName);
         container.Singleton(errortoken).UseType(Common.ExceptionLoggingService).WithName(errorName);

@@ -8,7 +8,7 @@ describe('ServiceContainer', () => {
     let loggingName = 'default-logging';;
     let errorName = 'default-error-handling';
 
-    let container: Common.ServicecContainer;
+    let container: Common.ServiceContainer;
     let loggingToken = { Token: 'ILoggingService' };
     let errortoken = { Token: 'IExceptionLoggingService' };
     let talkToken = { Token: 'ITalkService' };
@@ -16,7 +16,7 @@ describe('ServiceContainer', () => {
     let transientClientToken = { Token: 'ITransientClient' };
 
     beforeEach(() => {
-        container = new Common.ServicecContainer();
+        container = new Common.ServiceContainer();
 
         /**
          * Register services with different pattern

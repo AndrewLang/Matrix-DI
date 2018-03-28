@@ -6,7 +6,7 @@ import { Reflector, IsString } from './Reflector';
 import { IServiceProvider } from './IServiceProvider';
 import { IDictionary, Dictionary } from './imports';
 
-export class ServicecContainer implements IServiceContainer, IServiceProvider {
+export class ServiceContainer implements IServiceContainer, IServiceProvider {
 
     private nameTokenMapping = new Dictionary<string, Models.IServiceToken>();
     private tokenTable = new Dictionary<Models.IServiceToken, ServiceDescriptor>();
