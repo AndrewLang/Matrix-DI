@@ -7,7 +7,9 @@ export interface IAppBuilder {
 
     readonly Properties: IDictionary<any, any>;
 
-    Use(component: IComponent): void;
+    readonly Components: IComponent[];
+
+    Use(component: IComponent): IAppBuilder;
 
     Build(): void;
 }
@@ -29,10 +31,16 @@ export class AppBuilder implements IAppBuilder {
         return this.properties;
     }
 
-    Use(component: IComponent): void {
+    get Components(): IComponent[] {
+        return this.components;
+    }
+
+    Use(component: IComponent): IAppBuilder {
         if (component) {
             this.components.push(component);
         }
+
+        return this;
     }
 
     Build(): void {

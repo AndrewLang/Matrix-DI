@@ -37,7 +37,7 @@ describe('AppBuilder', () => {
         expect(appBuilder).to.not.be.equals(null);
     });
 
-    it('ServiceProvider is valid', () => {
+    it('ServiceContainer is valid', () => {
         let appBuilder = container.Resolve<Common.IAppBuilder>(appBuilderToken);
         expect(appBuilder).to.not.be.equals(null);
         expect(appBuilder.ServiceContainer).to.not.be.equals(null);
@@ -46,6 +46,34 @@ describe('AppBuilder', () => {
         let appBuilder = container.Resolve<Common.IAppBuilder>(appBuilderToken);
         expect(appBuilder.Properties).to.not.be.equals(null);
     });
-    
+    it('Use component', () => {
+        let appBuilder = container.Resolve<Common.IAppBuilder>(appBuilderToken);
+        let component: Common.IComponent = {
+            ConfigureServices: (services: Common.IServiceContainer) => { },
+            Configure: () => { }
+        };
+
+        appBuilder.Use(component);
+
+        expect(appBuilder.Components).to.not.be.equals(null);
+        expect(appBuilder.Components.length).equals(1);
+    });
+
+    it('Build', () => {
+        let serviceConfigured = false;
+        let configured = false;
+
+        let appBuilder = container.Resolve<Common.IAppBuilder>(appBuilderToken);
+        let component: Common.IComponent = {
+            ConfigureServices: (services: Common.IServiceContainer) => { serviceConfigured = true; },
+            Configure: () => { configured = true; }
+        };
+
+        appBuilder.Use(component).Build();
+
+
+        expect(serviceConfigured).equals(true);
+        expect(configured).equals(true);
+    });
 
 });
